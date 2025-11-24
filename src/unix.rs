@@ -392,7 +392,10 @@ impl Helper {
                 #[cfg(not(target_os = "zos"))]
                 libc::pthread_kill(self.thread.as_pthread_t() as _, libc::SIGUSR1);
                 #[cfg(target_os = "zos")]
-                libc::pthread_kill(libc::pthread_t { __: self.thread.as_pthread_t() as u64}, libc::SIGUSR1);
+                {
+                    let self_pthread_t = self.thread.as_pthread_t();
+                    libc::pthread_kill(libc::pthread_t { __: self_pthread_t.__ }, libc::SIGUSR1);
+                }
             }
             state = self
                 .state
